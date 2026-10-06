@@ -13,7 +13,7 @@ pack onto anyone's machine.
 ## Use a published pack
 
 ```
-rutken packs update  --url https://rutkenprod01.blob.core.windows.net/registry
+rutken packs update  --url https://www.rutken.com/registry
 rutken packs install rutken/<id>
 ```
 
