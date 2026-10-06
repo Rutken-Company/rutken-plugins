@@ -1,0 +1,53 @@
+name: validate-packs
+
+# Screens every submitted pack so a maintainer only reviews valid ones.
+# Runs on this PUBLIC repo, so it uses free public-repo Actions minutes -- it
+# never touches the private repo's (disabled) minutes. It downloads the real
+# community Rutken CLI and runs `rutken packs validate` on every pack; nothing
+# is signed or published here (that happens in the trusted pipeline after a
+# maintainer merges).
+
+on:
+  pull_request:
+    paths: ['packs/**']
+  push:
+    branches: [main]
+    paths: ['packs/**']
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the Rutken CLI (community, linux-x86_64)
+        run: |
+          set -euo pipefail
+          BASE="https://rutkenprod01.blob.core.windows.net/community"
+          VER="$(curl -fsSL "$BASE/latest.json" | jq -r .version)"
+          echo "rutken version: $VER"
+          curl -fsSL -o rutken "$BASE/binaries/$VER/community/linux-x86_64/rutken"
+          chmod +x rutken
+
+      - name: Validate every pack
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          found=0
+          fail=0
+          for p in packs/*.json; do
+            found=1
+            echo "== validating $p =="
+            if ! ./rutken packs validate "$p"; then
+              echo "::error file=$p::pack failed rutken packs validate"
+              fail=1
+            fi
+          done
+          if [[ "$found" == "0" ]]; then
+            echo "no packs/*.json to validate"
+          fi
+          exit "$fail"

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "publisher": "example",
+  "id": "example-pack",
+  "version": "1.0.0",
+  "min_rutken_version": "0.3.0",
+  "rules": [
+    {
+      "id": "runtime-exec",
+      "title": "Executes OS commands via Runtime.exec",
+      "severity": "Medium",
+      "confidence": "High",
+      "description": "Example rule. The app shells out to the OS via java.lang.Runtime.exec. Replace this rule (and the publisher/id/author above) with your own detection. See https://www.rutken.com/docs/writing-a-plugin.html",
+      "taxonomy": {
+        "cwe": [78],
+        "masvs": ["MASVS-CODE-4"],
+        "cis": [],
+        "ssdf": [],
+        "slsa": []
+      },
+      "matcher": {
+        "op": "predicate",
+        "predicate": "calls_method",
+        "class": {
+          "kind": "literal",
+          "value": "java/lang/Runtime"
+        },
+        "method": {
+          "kind": "literal",
+          "value": "exec"
+        }
+      }
+    }
+  ]
+}
