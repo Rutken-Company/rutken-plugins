@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "publisher": "rutken-labs",
+  "id": "transport-security",
+  "version": "1.0.0",
+  "min_rutken_version": "0.2.3",
+  "rules": [
+    {
+      "id": "cleartext-traffic-enabled",
+      "title": "Cleartext (HTTP) traffic explicitly enabled",
+      "severity": "High",
+      "confidence": "High",
+      "description": "The app sets android:usesCleartextTraffic=\"true\", permitting unencrypted HTTP. Traffic can be read or modified on the network (CWE-319). Serve over HTTPS and set usesCleartextTraffic=\"false\".",
+      "taxonomy": { "cwe": [319], "masvs": ["MASVS-NETWORK-1"], "cis": [], "ssdf": [], "slsa": [] },
+      "matcher": { "op": "predicate", "predicate": "uses_cleartext_traffic", "value": true }
+    },
+    {
+      "id": "no-network-security-config",
+      "title": "No Network Security Config declared",
+      "severity": "Low",
+      "confidence": "Medium",
+      "description": "No android:networkSecurityConfig is declared, so cleartext permission and trust-anchor policy fall back to platform defaults (CWE-319). Add a res/xml Network Security Config that sets cleartextTrafficPermitted=\"false\" and scopes trust anchors.",
+      "taxonomy": { "cwe": [319], "masvs": ["MASVS-NETWORK-2"], "cis": [], "ssdf": [], "slsa": [] },
+      "matcher": { "op": "predicate", "predicate": "has_network_security_config", "value": false }
+    }
+  ]
+}
